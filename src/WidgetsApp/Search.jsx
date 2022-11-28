@@ -3,7 +3,31 @@ import React, { useEffect, useState } from 'react';
 
 const Search = () => {
     const [term, setTerm] = useState('');
+    const [debouncedTerm, setDebouncedTerm] = useState(term);
     const [results, setResults] = useState([]);
+
+    useEffect(() => {
+        const timerId = setTimeout(() => {
+            setDebouncedTerm(term);
+        }, 1000)
+
+        return () => {
+            clearTimeout(timerId);
+        }
+    }, [term]);
+
+    useEffect(() => {
+        const search = async () => {
+            const response = await axios.get('https://api.mangadex.org/manga', {
+                params: {
+                    title: term
+                },
+            })
+
+            setResults(response.data.data);
+            console.log(results);
+        };
+    });
 
     /*
         No second arg: On initial render and also upon rerender
@@ -31,18 +55,9 @@ const Search = () => {
             .then((response) => {
                 console.log(response.data)
             })
-    */    
+    */     
         
-        const search = async () => {
-            const response = await axios.get('https://api.mangadex.org/manga', {
-                params: {
-                    title: term
-                },
-            })
-
-            setResults(response.data.data);
-            console.log(results);
-        };
+        
 
         if (term && !results.length) {
             search();
@@ -58,7 +73,7 @@ const Search = () => {
             }
         }
 
-    }, [term]);
+    }, [term, results.length]);
     
     
     const renderedResults = results.map((result) => {
