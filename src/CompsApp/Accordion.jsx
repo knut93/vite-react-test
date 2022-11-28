@@ -1,33 +1,31 @@
 import React, { useState } from 'react';
 
 function Accordion({ items }) {
-    const [activeIndex, setActiveIndex] = useState(null);
+    const [expandedIndex, setExpandedIndex] = useState(1);
 
-    const onTitleClick = (index) => {
-            setActiveIndex(index)
+    const handleClick = (nextIndex) => {
+        setExpandedIndex(nextIndex)
     }
+
     const renderedItems = items.map((item, index) => {
-        const active = index === activeIndex ? 'active' : '';
+        const isExpanded = index === expandedIndex;
+
+    
+
         return (
-            <React.Fragment key={item.title}>
-                <div 
-                    className={`title ${active}`}
-                    onClick={() => onTitleClick(index)}
-                >
-                    <i className="dropdown icon"></i>
-                    {item.title}
+            <div className="border border-black" key={item.id}>
+                <div onClick={() => handleClick(index)}>
+                    {item.label}
                 </div>
-                <div className={`content ${active}`}>
-                    <p>{item.content}</p>
-                </div>
-            </React.Fragment>
+                {isExpanded && <div>{item.content}</div>}
+            </div>
         )
-    })
+    });
     return (
-        <div className="ui styled accordion">
+        <div>
             {renderedItems}
-         </div>
-    )
+        </div>
+    );
 }
 
 export default Accordion;
